@@ -1,5 +1,4 @@
 apiVersion: apps/v1
-kind: apiVersion: apps/v1
 kind: Deployment
 metadata:
   name:  rdicidr
@@ -18,8 +17,7 @@ spec:
     spec:
       containers:
       - name:  rdicidr
-        image:  MYAPP:latest
-        
+        image:  yohanan91/devops-ci:latest
         envFrom:
         - secretRef:
             name: mysecret
@@ -27,3 +25,18 @@ spec:
         - containerPort:  3000
           name:  rdicidr
         
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: rdicidr
+  namespace: production
+spec:
+  selector:
+    app: my_app
+  type: ClusterIP
+  ports:
+  - name: my_app
+    protocol: TCP
+    port: 3000
+    targetPort: 8080

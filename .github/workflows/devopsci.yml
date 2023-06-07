@@ -32,5 +32,5 @@
                 - name: Test(Jest)
                   run: CI=true npm run test
                 ### Build
-                - name: Test(Jest)
+                - name: Build
                   run: npm run build

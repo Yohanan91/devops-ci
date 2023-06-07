@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  rdicidr
+  namespace: production
+  labels:
+    app:  my_app
+spec:
+  selector:
+    matchLabels:
+      app: my_app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app:  my_app
+    spec:
+      containers:
+      - name:  rdicidr
+        image:  MYAPP:latest
+        
+        envFrom:
+        - secretRef:
+            name: mysecret
+        ports:
+        - containerPort:  3000
+          name:  rdicidr
+        

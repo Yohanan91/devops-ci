@@ -7,7 +7,9 @@
                 - main
 
     ### Jobs and Steps
-
+    env:
+        REGISTRY: docker.io
+        IMAGE_NAME: ${{ github.repository }}
     jobs:
         build:
             runs-on: ubuntu-latest
@@ -21,16 +23,32 @@
                     node-version: 15
                 ### Install dependencies
                 - name: Install dependencies
-                  run: npm install
-                ### Linter
-                - name: Linter(ESlint)
-                  run: npm run lint
-                ### Formatter
-                - name: Formatter(Prettier)
-                  run: npm install prettier && npm run prettier
-                #### Test
-                - name: Test(Jest)
-                  run: CI=true npm run test
-                ### Build
-                - name: Test(Jest)
-                  run: npm run build
+                  run: |
+                    npm install
+                    npm run lint
+                    npm install prettier && npm run prettier
+                    CI=true npm run test
+                    npm run build
+        
+
+                - name: Set up Docker Buildx
+                  uses: docker/setup-buildx-action@v2
+                - name: Login to Docker Hub
+                  uses: docker/login-action@v2
+                  with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+                - name: Docker meta
+                  id: meta
+                  uses: docker/metadata-action@v4
+                  with:
+                   images: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME}}
+            
+                - name: Build and push
+                  uses: docker/build-push-action@v4
+                  with:
+                    push: true
+                    tags: ${{ env.REGISTRY}}/${{ env.IMAGE_NAME}}:latest
+                    
+                    
